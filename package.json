@@ -1,0 +1,25 @@
+{
+  "name": "twitch-following-organizer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Chrome extension that allows you to organize the streamers you follow.",
+  "scripts": {
+    "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
+    "build": "parcel build src/manifest.json --config @parcel/config-webextension"
+  },
+  "author": "@javimbk",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.8.0",
+    "@types/chrome": "^0.0.200",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
+    "parcel": "^2.8.0",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.1.4"
+  }
+}
