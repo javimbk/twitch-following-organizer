@@ -1,7 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-import SidebarApp from "../sidebar-app/App";
+import { SidebarApp } from "../sidebar-app/App";
+import "../static/index.css";
 import { store } from "../store";
 import { createTwitchie } from "../twitchie";
 import { connectChromeMessagingToStore } from "./connectChromeMessagingToStore";

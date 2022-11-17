@@ -1,4 +1,4 @@
-import { Store } from "../store";
+import type { Store } from "../store";
 
 export function connectChromeMessagingToStore(store: Store) {
   chrome.runtime.onMessage.addListener((msg) => {

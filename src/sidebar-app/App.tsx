@@ -1,7 +1,7 @@
 import React from "react";
 import { useBoundStore } from "./useBoundStore";
 
-function App() {
+export function SidebarApp() {
   const allFollowing = useBoundStore((state) => state.allFollowing);
   const isVisible = useBoundStore((state) => state.isVisible);
 
@@ -15,7 +15,7 @@ function App() {
       }}
     >
       <header className="App-header">
-        <p>TFW Following List</p>
+        <p className="text-blue-300">TFW Following List</p>
         <button
           onClick={() => useBoundStore.setState({ isVisible: false })}
           style={{
@@ -31,5 +31,3 @@ function App() {
     </div>
   ) : null;
 }
-
-export default App;
