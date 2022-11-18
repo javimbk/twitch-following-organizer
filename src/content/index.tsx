@@ -11,6 +11,7 @@ async function main() {
   /**
    * Injecting React App into Sidebar
    * TODO: Avoid layout shift, inject as soon as possible on the whole sidebar, right now it displays "For You"
+   * TODO: Interval shouldn't be running unless sidebar is expanded.
    */
   const sidebarContentsDiv = document.querySelector(".side-bar-contents");
 
@@ -46,6 +47,10 @@ async function main() {
       followNumber: event.detail.followedNum,
       allFollowing: event.detail.allFollowed,
     });
+  });
+
+  twitchie.on("sidebar-class-change", (event) => {
+    store.setState({ isVisible: !event.detail.isCollapsed });
   });
 
   // I can use twitchie here.

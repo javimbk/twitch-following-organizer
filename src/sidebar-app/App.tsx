@@ -6,24 +6,19 @@ export function SidebarApp() {
   const allFollowing = useBoundStore((state) => state.allFollowing);
   const isVisible = useBoundStore((state) => state.isVisible);
 
-  console.log({ allFollowing });
-
   return isVisible ? (
     <div className="w-full h-full overflow-y-scroll bg-slate-800">
-      <header className="App-header">
-        <p className="text-blue-300 font-extrabold text-center">TFW</p>
+      <div className="flex items-center justify-between p-2">
+        <div className="text-blue-300 font-extrabold text-center">TFW</div>
         <button
+          className="bg-blue-500 hover:bg-blue-700 text-white text-xs font-extrabold uppercase py-1 px-2 rounded"
           onClick={() => useBoundStore.setState({ isVisible: false })}
-          style={{
-            background: "blueviolet",
-            padding: "8px",
-            borderRadius: "5px",
-          }}
         >
           Hide Layout
         </button>
-        {allFollowing && allFollowing.map((el) => <FollowedChannel key={el.channelHandle} channel={el} />)}
-      </header>
+      </div>
+
+      {allFollowing && allFollowing.map((el) => <FollowedChannel key={el.channelHandle} channel={el} />)}
     </div>
   ) : null;
 }
