@@ -1,8 +1,8 @@
 {
   "name": "twitch-following-organizer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "A Chrome extension that allows you to organize the streamers you follow.",
+  "description": "TFW allows you to organize the Twitch streamers you follow the way you want. Sort them out by folders, content, and more...",
   "scripts": {
     "start": "parcel watch src/manifest.json --host localhost --config @parcel/config-webextension",
     "build": "parcel build src/manifest.json --config @parcel/config-webextension"
