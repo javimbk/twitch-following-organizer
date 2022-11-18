@@ -32,7 +32,7 @@ async function main() {
   root.render(<SidebarApp />);
 
   /** Changes to React App container based on store */
-  store.subscribe((state, prevState) => {
+  store.subscribe((state, _prevState) => {
     container!.style.display = state.isVisible ? "block" : "none";
   });
 

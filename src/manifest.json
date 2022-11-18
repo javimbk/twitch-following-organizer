@@ -6,13 +6,15 @@
     "service_worker": "background.ts",
     "type": "module"
   },
-  "action": {},
+  "action": {
+    "default_title": "Show TFW Sidebar"
+  },
   "content_scripts": [
     {
       "matches": ["*://*.twitch.tv/*"],
       "js": ["content/index.tsx"]
     }
   ],
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["activeTab"],
   "host_permissions": ["*://*.twitch.tv/*"]
 }

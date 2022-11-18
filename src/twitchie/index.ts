@@ -1,7 +1,12 @@
 // TODO: ReadyEvent can be simplified by not using CustomEvent to the outside or any event.
 type ReadyEventPayload = {
   followedNum: number;
-  allFollowed: string[];
+  allFollowed: {
+    channelHandle: string;
+    isLive: boolean;
+    viewerCount: string;
+    contentType: string | null;
+  }[];
 };
 
 export class ReadyEvent extends CustomEvent<ReadyEventPayload> {
@@ -46,9 +51,19 @@ export function createTwitchie(): Twitchie {
         eventTarget.dispatchEvent(
           new ReadyEvent({
             followedNum: followedChannelsList.length,
-            allFollowed: Array.from(followedChannelsList).map(
-              (el) => (el.querySelector("[data-a-target=side-nav-title]") as HTMLElement).innerText
-            ),
+            allFollowed: Array.from(followedChannelsList).map((el) => {
+              const channelHandle = (el.querySelector("[data-a-target=side-nav-title]") as HTMLElement).innerText;
+              const isLive = el.querySelector(".side-nav-card__live-status .tw-channel-status-indicator") !== null;
+              const viewerCount = (el.querySelector(".side-nav-card__live-status") as HTMLElement).innerText;
+              const contentType = (el.querySelector(".side-nav-card__metadata") as HTMLElement).innerText;
+
+              return {
+                channelHandle,
+                isLive,
+                viewerCount,
+                contentType: contentType ? contentType : null,
+              };
+            }),
           })
         );
       }, 100);

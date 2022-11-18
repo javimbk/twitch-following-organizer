@@ -2,7 +2,14 @@ import create from "zustand/vanilla";
 
 export type StoreState = {
   isVisible: boolean;
-  allFollowing: string[] | null;
+  allFollowing:
+    | {
+        channelHandle: string;
+        isLive: boolean;
+        viewerCount: string;
+        contentType: string | null;
+      }[]
+    | null;
   followNumber: number | null;
 };
 
