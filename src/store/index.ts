@@ -5,6 +5,7 @@ export type StoreState = {
   allFollowing:
     | {
         channelHandle: string;
+        avatarUrl: string | null;
         isLive: boolean;
         viewerCount: string;
         contentType: string | null;

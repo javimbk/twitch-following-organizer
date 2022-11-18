@@ -3,6 +3,7 @@ type ReadyEventPayload = {
   followedNum: number;
   allFollowed: {
     channelHandle: string;
+    avatarUrl: string | null;
     isLive: boolean;
     viewerCount: string;
     contentType: string | null;
@@ -53,12 +54,14 @@ export function createTwitchie(): Twitchie {
             followedNum: followedChannelsList.length,
             allFollowed: Array.from(followedChannelsList).map((el) => {
               const channelHandle = (el.querySelector("[data-a-target=side-nav-title]") as HTMLElement).innerText;
+              const avatarUrl = (el.querySelector(".tw-image-avatar") as HTMLElement).getAttribute("src");
               const isLive = el.querySelector(".side-nav-card__live-status .tw-channel-status-indicator") !== null;
               const viewerCount = (el.querySelector(".side-nav-card__live-status") as HTMLElement).innerText;
               const contentType = (el.querySelector(".side-nav-card__metadata") as HTMLElement).innerText;
 
               return {
                 channelHandle,
+                avatarUrl,
                 isLive,
                 viewerCount,
                 contentType: contentType ? contentType : null,
