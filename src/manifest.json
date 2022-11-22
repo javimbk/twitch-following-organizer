@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TwitchFollowingOrganizer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icons": {
     "48": "static/tfw-48-icon.png",
     "128": "static/tfw-128-icon.png"

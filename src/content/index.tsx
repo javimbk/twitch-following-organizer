@@ -13,6 +13,8 @@ async function main() {
    * TODO: Avoid layout shift, inject as soon as possible on the whole sidebar, right now it displays "For You"
    * TODO: Interval shouldn't be running unless sidebar is expanded.
    */
+  store.setState({ isLoading: true });
+
   const sidebarContentsDiv = document.querySelector(".side-bar-contents");
 
   const appDiv = document.createElement("div");
@@ -44,6 +46,8 @@ async function main() {
 
   twitchie.on("ready", (event) => {
     store.setState({
+      isLoading: false,
+      isLoggedIn: event.detail.isLoggedIn,
       followNumber: event.detail.followedNum,
       allFollowing: event.detail.allFollowed,
     });
@@ -53,7 +57,20 @@ async function main() {
     store.setState({ isVisible: !event.detail.isCollapsed });
   });
 
-  // I can use twitchie here.
+  twitchie.on("initialize-error", (event) => {
+    const { reason } = event.detail;
+
+    switch (reason) {
+      case "logged_out":
+        store.setState({
+          isLoading: false,
+          isLoggedIn: false,
+        });
+        break;
+      default:
+        throw new Error("This should never happen.");
+    }
+  });
 }
 
 main();

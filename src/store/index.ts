@@ -2,6 +2,8 @@ import create from "zustand/vanilla";
 
 export type StoreState = {
   isVisible: boolean;
+  isLoggedIn: boolean | null;
+  isLoading: boolean;
   allFollowing:
     | {
         channelHandle: string;
@@ -16,6 +18,8 @@ export type StoreState = {
 
 export const store = create<StoreState>(() => ({
   isVisible: true,
+  isLoggedIn: null,
+  isLoading: false,
   allFollowing: null,
   followNumber: null,
 }));

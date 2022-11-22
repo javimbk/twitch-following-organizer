@@ -1,6 +1,6 @@
 {
   "name": "twitch-following-organizer",
-  "version": "0.1.0",
+  "version": "0.0.2",
   "private": true,
   "description": "TFW allows you to organize the Twitch streamers you follow the way you want. Sort them out by folders, content, and more...",
   "scripts": {

@@ -1,5 +1,6 @@
 // TODO: ReadyEvent can be simplified by not using CustomEvent to the outside or any event.
 type ReadyEventPayload = {
+  isLoggedIn: true;
   followedNum: number;
   allFollowed: {
     channelHandle: string;
@@ -25,12 +26,23 @@ export class SidebarClassChangeEvent extends CustomEvent<SidebarClassChangeEvent
   }
 }
 
+type InitializeErrorEventPayload = {
+  reason: "logged_out";
+};
+
+export class InitializeErrorEvent extends CustomEvent<InitializeErrorEventPayload> {
+  constructor(payload: InitializeErrorEventPayload) {
+    super("initialize-error", { detail: payload });
+  }
+}
+
 type Unsubscribe = () => void;
 
 export interface Twitchie {
   initialize(): void;
   on(type: "ready", callback: (event: ReadyEvent) => void): Unsubscribe;
   on(type: "sidebar-class-change", callback: (event: SidebarClassChangeEvent) => void): Unsubscribe;
+  on(type: "initialize-error", callback: (event: InitializeErrorEvent) => void): Unsubscribe;
 }
 
 export function createTwitchie(): Twitchie {
@@ -39,6 +51,15 @@ export function createTwitchie(): Twitchie {
   return {
     initialize() {
       const intervalId = setInterval(() => {
+        const loggedOutSignupButton = document.querySelector("[data-test-selector=anon-user-menu__sign-up-button]");
+
+        if (loggedOutSignupButton) {
+          console.log("TFW - Twitchie - Initialize Error: You need to be logged in.");
+          eventTarget.dispatchEvent(new InitializeErrorEvent({ reason: "logged_out" }));
+          clearInterval(intervalId);
+          return;
+        }
+
         const followedChannelsList = document.querySelectorAll("[data-test-selector=followed-channel]");
 
         if (followedChannelsList.length === 0) {
@@ -59,6 +80,7 @@ export function createTwitchie(): Twitchie {
         console.log(`TFW - ContentScript - Ready, fetched ${followedChannelsList.length} streamers.`);
         eventTarget.dispatchEvent(
           new ReadyEvent({
+            isLoggedIn: true,
             followedNum: followedChannelsList.length,
             allFollowed: Array.from(followedChannelsList).map((el) => {
               const channelHandle = (el.querySelector("[data-a-target=side-nav-title]") as HTMLElement).innerText;
