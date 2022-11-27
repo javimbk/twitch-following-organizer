@@ -25,6 +25,9 @@ export function SidebarApp() {
     return <LoggedOutApp />;
   }
 
+  const allFollowingFavourites = allFollowing && allFollowing.filter((el) => el.isFavourite);
+  const allFollowingRest = allFollowing && allFollowing.filter((el) => !el.isFavourite);
+
   return (
     <div className="w-full h-full overflow-y-scroll bg-slate-800">
       <div className="flex items-center justify-between p-2">
@@ -37,7 +40,23 @@ export function SidebarApp() {
         </button>
       </div>
 
-      {allFollowing && allFollowing.map((el) => <FollowedChannel key={el.channelHandle} channel={el} />)}
+      {allFollowingFavourites ? (
+        <div>
+          {allFollowingFavourites.length > 0 && (
+            <div className="text-yellow-400 font-extrabold text-center text-xs">{"<FAVOURITES>"}</div>
+          )}
+          {allFollowingFavourites.map((el) => (
+            <FollowedChannel key={el.channelHandle} channel={el} />
+          ))}
+          {allFollowingFavourites.length > 0 && (
+            <div className="text-yellow-400 font-extrabold text-center text-xs pt-1">{"</FAVOURITES>"}</div>
+          )}
+        </div>
+      ) : null}
+
+      <div>
+        {allFollowingRest && allFollowingRest.map((el) => <FollowedChannel key={el.channelHandle} channel={el} />)}
+      </div>
     </div>
   );
 }

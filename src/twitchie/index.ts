@@ -20,6 +20,7 @@ export class ReadyEvent extends CustomEvent<ReadyEventPayload> {
 type SidebarClassChangeEventPayload = {
   isCollapsed: boolean;
 };
+
 export class SidebarClassChangeEvent extends CustomEvent<SidebarClassChangeEventPayload> {
   constructor(payload: SidebarClassChangeEventPayload) {
     super("sidebar-class-change", { detail: payload });

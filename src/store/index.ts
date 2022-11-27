@@ -9,6 +9,7 @@ export type StoreState = {
         channelHandle: string;
         avatarUrl: string | null;
         isLive: boolean;
+        isFavourite: boolean;
         viewerCount: string | null;
         contentType: string | null;
       }[]

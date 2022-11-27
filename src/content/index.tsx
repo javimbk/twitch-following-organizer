@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { SidebarApp } from "../sidebar-app/App";
 import "../static/index.css";
+import { getFavouritesFromStorage } from "../storage";
 import { store } from "../store";
 import { createTwitchie } from "../twitchie";
 import { connectChromeMessagingToStore } from "./connectChromeMessagingToStore";
@@ -44,12 +45,20 @@ async function main() {
   const twitchie = createTwitchie();
   twitchie.initialize();
 
-  twitchie.on("ready", (event) => {
+  twitchie.on("ready", async (event) => {
+    const favouritesFromStorage = await getFavouritesFromStorage();
+
+    /** TODO: Avoid mapping if not favourites. */
+    const allFollowingWithFavourites = event.detail.allFollowed.map((element) => ({
+      ...element,
+      isFavourite: favouritesFromStorage !== null ? favouritesFromStorage.includes(element.channelHandle) : false,
+    }));
+
     store.setState({
       isLoading: false,
       isLoggedIn: event.detail.isLoggedIn,
       followNumber: event.detail.followedNum,
-      allFollowing: event.detail.allFollowed,
+      allFollowing: allFollowingWithFavourites,
     });
   });
 
@@ -69,6 +78,21 @@ async function main() {
         break;
       default:
         throw new Error("This should never happen.");
+    }
+  });
+
+  /** Subscribe to changes on Storage */
+  chrome.storage.onChanged.addListener(function (changes, namespace) {
+    for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+      if (key === "tfw_favourites") {
+        /** Refresh all the favourites state */
+        const previousAllFollowing = store.getState().allFollowing;
+        const newAllFollowing = previousAllFollowing?.map((el) => ({
+          ...el,
+          isFavourite: newValue.includes(el.channelHandle),
+        }));
+        store.setState({ allFollowing: newAllFollowing });
+      }
     }
   });
 }
