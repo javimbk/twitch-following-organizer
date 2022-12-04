@@ -1,5 +1,6 @@
 # Twitch Following Organizer
 
+- [🛣 Project Roadmap (Features & Bugs)](https://github.com/users/javimbk/projects/1/views/1)
 - [🔗 Chrome Web Store published version](https://chrome.google.com/webstore/detail/twitchfollowingorganizer/nbkhejjefhgndeobikkemkmkdoiefeop)
 - [🍞 Releases](https://github.com/javimbk/twitch-following-organizer/releases)
 
