@@ -4,6 +4,9 @@ const baseFontSize = 12;
 
 module.exports = {
   content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       spacing: () => ({
