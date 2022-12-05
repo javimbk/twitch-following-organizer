@@ -17,6 +17,28 @@ export class ReadyEvent extends CustomEvent<ReadyEventPayload> {
   }
 }
 
+export class UpdateFollowedStartedEvent extends CustomEvent<{}> {
+  constructor() {
+    super("update-followed.started");
+  }
+}
+
+type UpdateFollowedCompletedEventPayload = {
+  allFollowed: {
+    channelHandle: string;
+    avatarUrl: string | null;
+    isLive: boolean;
+    viewerCount: string | null;
+    contentType: string | null;
+  }[];
+};
+
+export class UpdateFollowedCompletedEvent extends CustomEvent<UpdateFollowedCompletedEventPayload> {
+  constructor(payload: UpdateFollowedCompletedEventPayload) {
+    super("update-followed.completed", { detail: payload });
+  }
+}
+
 type SidebarClassChangeEventPayload = {
   isCollapsed: boolean;
 };
@@ -42,6 +64,8 @@ type Unsubscribe = () => void;
 export interface Twitchie {
   initialize(): void;
   on(type: "ready", callback: (event: ReadyEvent) => void): Unsubscribe;
+  on(type: "update-followed.started", callback: () => void): Unsubscribe;
+  on(type: "update-followed.completed", callback: (event: UpdateFollowedCompletedEvent) => void): Unsubscribe;
   on(type: "sidebar-class-change", callback: (event: SidebarClassChangeEvent) => void): Unsubscribe;
   on(type: "initialize-error", callback: (event: InitializeErrorEvent) => void): Unsubscribe;
 }
@@ -51,13 +75,13 @@ export function createTwitchie(): Twitchie {
 
   return {
     initialize() {
-      const intervalId = setInterval(() => {
+      const initializeIntervalId = setInterval(() => {
         const loggedOutSignupButton = document.querySelector("[data-test-selector=anon-user-menu__sign-up-button]");
 
         if (loggedOutSignupButton) {
           console.log("TFW - Twitchie - Initialize Error: You need to be logged in.");
           eventTarget.dispatchEvent(new InitializeErrorEvent({ reason: "logged_out" }));
-          clearInterval(intervalId);
+          clearInterval(initializeIntervalId);
           return;
         }
 
@@ -76,7 +100,7 @@ export function createTwitchie(): Twitchie {
           return;
         }
 
-        clearInterval(intervalId);
+        clearInterval(initializeIntervalId);
 
         console.log(`TFW - ContentScript - Ready, fetched ${followedChannelsList.length} streamers.`);
         eventTarget.dispatchEvent(
@@ -122,6 +146,35 @@ export function createTwitchie(): Twitchie {
       if (sidebarDOMElement) {
         sidebarObserver.observe(sidebarDOMElement, { attributes: true });
       }
+
+      /** Polling to update values. TODO: Use MutationObserver instead. */
+      setInterval(() => {
+        eventTarget.dispatchEvent(new UpdateFollowedStartedEvent());
+
+        const followedChannelsList = document.querySelectorAll("[data-test-selector=followed-channel]");
+
+        eventTarget.dispatchEvent(
+          new UpdateFollowedCompletedEvent({
+            allFollowed: Array.from(followedChannelsList).map((el) => {
+              const channelHandle = (el.querySelector("[data-a-target=side-nav-title]") as HTMLElement).innerText;
+              const avatarUrl = (el.querySelector(".tw-image-avatar") as HTMLElement).getAttribute("src");
+              const isLive = el.querySelector(".side-nav-card__live-status .tw-channel-status-indicator") !== null;
+              const viewerCountDOMElement = el.querySelector(".side-nav-card__live-status") as HTMLElement;
+              const viewerCount =
+                viewerCountDOMElement.innerText !== "Offline" ? viewerCountDOMElement.innerText : null;
+              const contentType = (el.querySelector(".side-nav-card__metadata") as HTMLElement).innerText;
+
+              return {
+                channelHandle,
+                avatarUrl,
+                isLive,
+                viewerCount,
+                contentType: contentType ? contentType : null,
+              };
+            }),
+          })
+        );
+      }, 3 * 60 * 1000); // Every 3 minutes should be enough to get accurate data.
     },
     on(type: string, callback: (event: any) => void): Unsubscribe {
       eventTarget.addEventListener(type, callback);

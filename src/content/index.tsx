@@ -62,6 +62,28 @@ async function main() {
     });
   });
 
+  twitchie.on("update-followed.started", () => {
+    store.setState({
+      isLoading: true,
+    });
+  });
+
+  /** TODO: Merge with the Ready one since code is a bit shared */
+  twitchie.on("update-followed.completed", async (event) => {
+    const favouritesFromStorage = await getFavouritesFromStorage();
+
+    /** TODO: Avoid mapping if not favourites. */
+    const allFollowingWithFavourites = event.detail.allFollowed.map((element) => ({
+      ...element,
+      isFavourite: favouritesFromStorage !== null ? favouritesFromStorage.includes(element.channelHandle) : false,
+    }));
+
+    store.setState({
+      isLoading: false,
+      allFollowing: allFollowingWithFavourites,
+    });
+  });
+
   twitchie.on("sidebar-class-change", (event) => {
     store.setState({ isVisible: !event.detail.isCollapsed });
   });
